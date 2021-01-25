@@ -97,8 +97,32 @@ begin
             newAvatar,
             foundUser.user_key,
             foundUser.created_at
-        ));
+        )::auth_action_success);
     end if;
     return result;
 end;
 $updateAvatar$ language plpgsql;
+
+CREATE or replace function updateDisplayName(userKey uuid, displayName varchar(256))
+returns json as $updateDisplayName$
+declare
+    result json;
+    foundUser record;
+begin
+    select * from users into foundUser where user_key=userKey;
+    if not found then
+        result = row_to_json(row(false, 'User not found')::auth_action_failure);
+    else
+        update users set display_name=displayName where user_key=userKey;
+        result = row_to_json(row(
+            true,
+            foundUser.name,
+            displayName,
+            foundUser.avatar,
+            foundUser.user_key,
+            foundUser.created_at
+        )::auth_action_success);
+    end if;
+    return result;
+end;
+$updateDisplayName$ language plpgsql;
