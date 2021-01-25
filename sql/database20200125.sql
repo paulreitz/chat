@@ -46,7 +46,7 @@ begin
             result = row_to_json(row(false, 'Invalid activation code')::auth_action_failure);
         else
             insert into users (user_key, name, display_name, avatar, created_at, password) VALUES (userKey, userName, userName, 'default.jpg', createdAt, crypt(userPass, gen_salt('bf')));
-            update activation_codes set valid=false where activation_key=activation_key;
+            update activation_codes set valid=false where activation_key=activationKey;
             result = row_to_json(row(true, userName, userName, 'default.jpg', userKey, createdAt)::auth_action_success);
         end if;
     else
@@ -55,3 +55,50 @@ begin
     return result;
 end;
 $createUser$ language plpgsql;
+
+CREATE or replace function loginUser(userName varchar(256), userPass text)
+returns json as $loginUser$
+declare
+    result json;
+    foundUser record;
+begin
+    select * from users into foundUser where name=userName and password=crypt(userPass, password);
+    if not found then
+        result = row_to_json(row(false, 'User name or password incorrect')::auth_action_failure);
+    else
+        result = row_to_json(row(
+            true,
+            foundUser.name,
+            foundUser.display_name,
+            foundUser.avatar,
+            foundUser.user_key,
+            foundUser.created_at
+        ));
+    end if;
+    return result;
+end;
+$loginUser$ language plpgsql;
+
+CREATE or replace function updateAvatar(userKey uuid, newAvatar varchar(256))
+returns json as $updateAvatar$
+declare
+    result json;
+    foundUser record;
+begin
+    select * from users into foundUser where user_key=userKey;
+    if not found then
+        result = row_to_json(row(false, 'User not found')::auth_action_failure);
+    else
+        update users set avatar=newAvatar where user_key=userKey;
+        result = row_to_json(row(
+            true,
+            foundUser.name,
+            foundUser.display_name,
+            newAvatar,
+            foundUser.user_key,
+            foundUser.created_at
+        ));
+    end if;
+    return result;
+end;
+$updateAvatar$ language plpgsql;
