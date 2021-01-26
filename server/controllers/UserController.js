@@ -6,6 +6,7 @@ class UserController {
         this.userDB = new UserDB();
         const path = '/user';
         router.route(`${path}/test`).get(this.test);
+        router.route(`${path}/create`).post(this.create);
     }
 
     test = (req, res) => {

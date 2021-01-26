@@ -10,10 +10,12 @@ class UserDB {
         return new Promise((resolve, reject) => {
             const query = `SELECT createUser('${userName}', '${password}', '${activationCode}');`;
             this.pool.query(query, (err, result) => {
+                console.log('result...');
+                console.log(result);
                 if (err) {
                     reject(err);
                 }
-                resolve(result.rows[0].createUser);
+                resolve(result.rows[0].createuser);
             });
         });
     }
@@ -25,7 +27,7 @@ class UserDB {
                 if (err) {
                     reject(err);
                 }
-                resolve(result.rows[0].loginUser);
+                resolve(result.rows[0].loginuser);
             });
         });
     }
@@ -37,7 +39,7 @@ class UserDB {
                 if (err) {
                     reject(err);
                 }
-                resolve(result.rows[0].updateAvatar);
+                resolve(result.rows[0].updateavatar);
             });
         });
     }
@@ -49,7 +51,7 @@ class UserDB {
                 if (err) {
                     reject(err);
                 }
-                resolve(result.rows[0].updateDisplayName);
+                resolve(result.rows[0].updatedisplayname);
             })
         })
     }
