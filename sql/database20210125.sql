@@ -73,7 +73,7 @@ begin
             foundUser.avatar,
             foundUser.user_key,
             foundUser.created_at
-        ));
+        )::auth_action_success);
     end if;
     return result;
 end;
