@@ -7,6 +7,7 @@ class UserController {
         const path = '/user';
         router.route(`${path}/create`).post(this.create);
         router.route(`${path}/auth`).post(this.authenticate);
+        router.route(`${path}/avatar`).post(this.updateAvatar);
     }
 
     create = (req, res) => {
@@ -48,6 +49,27 @@ class UserController {
         }
     }
 
+    updateAvatar = (req, res) => {
+        const key = this.verifyToken(req.get('x-access-token'));
+        if (key) {
+            if (req.body && req.body.avatar) {
+                this.userDB.updateAvatar(key, req.body.avatar)
+                .then(result => {
+                    res.status(200).send(result);
+                })
+                .catch(error => {
+                    res.status(500).send({error});
+                }); 
+            }
+            else {
+                res.status(400).send({success: false, message: 'Missing Parameters'});
+            }
+        }
+        else {
+            res.status(403).send({success: false, message: 'Unauthorized'});
+        }
+    }
+
     getUserObject(data) {
         let userData = {
             success: true,
@@ -60,6 +82,18 @@ class UserController {
         const token = jwt.sign(userData, process.env.SECRET);
         userData.token = token;
         return userData;
+    }
+
+    verifyToken(header) {
+        let token = header.split(' ')[1];
+        let key;
+        try {
+            key = jwt.verify(token, process.env.SECRET).key;
+        }
+        catch(err) {
+            key = null;
+        }
+        return key;
     }
 }
 
