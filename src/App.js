@@ -1,15 +1,26 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from '@material-ui/styles';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import PublicRoute from './routers/PublicRoute';
+import PrivateRoute from './routers/PrivateRoute';
 
 import store from './store/configureStore';
 import theme from './theme/theme';
+import Header from './components/Header';
 
 function App() {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <div>App with theme</div>
+        <BrowserRouter>
+          <Header />
+          <Switch>
+            <PublicRoute exact path="/" render={(props) => <div>Home</div>} />
+            <PrivateRoute exact path="/profile" render={(props) => <div>Profile</div>} />
+            <Route path="*" render={(props) => <div>404</div>} />
+          </Switch>
+        </BrowserRouter>
       </ThemeProvider>
     </Provider>
   );

@@ -13,23 +13,19 @@ export default (state = defaultUserData, action) => {
     switch(action.type) {
         case userActions.SET_USER:
             return action.userData;
-        break;
 
         case userActions.UNSET_USER:
             return defaultUserData;
-        break;
 
         case userActions.SET_AVATAR:
             const setAvatarData = state;
             setAvatarData.avatar = action.avatar;
             return setAvatarData;
-        break;
 
         case userActions.SET_DISPLAY_NAME:
             const setDisplayNameData = state;
             setDisplayNameData.displayName = action.displayName;
             return setDisplayNameData;
-        break;
 
         default: 
             return state;
