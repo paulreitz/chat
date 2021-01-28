@@ -14,9 +14,7 @@ export const serverCall = (endpoint, data) => {
 }
 
 const attemptCall = (endpoint, data, resolve, reject, attempt) => {
-    axios.post(`${server}/${endpoint}`, {
-        params:data || {}
-    })
+    axios.post(`${server}/${endpoint}`, data)
     .then((response) => {
         resolve(response.data);
     })

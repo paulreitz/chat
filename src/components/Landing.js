@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -8,6 +9,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/styles';
 import Check from '@material-ui/icons/Check';
 import Block from '@material-ui/icons/Block';
+import {serverCall } from '../utils/server';
+import { setUser } from '../store/actions/userActions';
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -60,7 +63,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function Landing(props) {
+export function Landing(props) {
     const classes = useStyles();
 
     const [registerUserName, setRegisterUserName] = useState('');
@@ -90,6 +93,26 @@ export default function Landing(props) {
         if (loginUserName && loginPassword) {
             setLoadingMessage('Loging in...');
             setLoading(true);
+            serverCall('user/auth', {user: loginUserName, password: loginPassword})
+            .then(result => {
+                console.log(result);
+                setLoading(false);
+                setLoadingMessage('');
+                const userData = {
+                    name: result.name,
+                    displayName: result.displayName,
+                    avatar: result.avatar,
+                    key: result.key,
+                    createdAt: result.createdAt,
+                    token: result.token
+                };
+                props.setUser(userData);
+            })
+            .catch(error => {
+                console.log(error);
+                setLoading(false);
+                setLoadingMessage('');
+            })
         }
     }
 
@@ -133,7 +156,7 @@ export default function Landing(props) {
                     <TextField id="lname" label="User Name" onChange={(e) => {setLoginUserName(e.target.value)}} />
                 </Grid>
                 <Grid item xs={12} className={classes.field}>
-                    <TextField id="lpassword" label="Passwrod" onChange={(e) => {setLoginPassword(e.target.value)}} />
+                    <TextField id="lpassword" label="Passwrod" type="password" onChange={(e) => {setLoginPassword(e.target.value)}} />
                 </Grid>
                 <Grid item xs={12} className={classes.field}>
                     <Button variant="contained" color="primary" onClick={doLogin}>Login</Button>
@@ -169,3 +192,9 @@ export default function Landing(props) {
         </React.Fragment>
     )
 }
+
+const mapDispatchToProps = (dispatch) => ({
+    setUser: (userData) => dispatch(setUser(userData))
+});
+
+export default connect(undefined, mapDispatchToProps)(Landing);
