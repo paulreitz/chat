@@ -8,6 +8,7 @@ import PrivateRoute from './routers/PrivateRoute';
 import store from './store/configureStore';
 import theme from './theme/theme';
 import Header from './components/Header';
+import Landing from './components/Landing';
 
 function App() {
   return (
@@ -16,7 +17,7 @@ function App() {
         <BrowserRouter>
           <Header />
           <Switch>
-            <PublicRoute exact path="/" render={(props) => <div>Home</div>} />
+            <PublicRoute exact path="/" component={Landing} />
             <PrivateRoute exact path="/profile" render={(props) => <div>Profile</div>} />
             <PrivateRoute exact path="/chat" render={(props) => <div>Chat</div>} />
             <Route path="*" render={(props) => <div>404</div>} />
