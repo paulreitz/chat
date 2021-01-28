@@ -18,6 +18,7 @@ function App() {
           <Switch>
             <PublicRoute exact path="/" render={(props) => <div>Home</div>} />
             <PrivateRoute exact path="/profile" render={(props) => <div>Profile</div>} />
+            <PrivateRoute exact path="/chat" render={(props) => <div>Chat</div>} />
             <Route path="*" render={(props) => <div>404</div>} />
           </Switch>
         </BrowserRouter>
