@@ -77,6 +77,8 @@ export function Landing(props) {
 
     const [loading, setLoading] = useState(false);
     const [loadingMessage, setLoadingMessage] = useState('');
+    const [isError, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const verify = (a, b) => {
         setVerified(a && a === b);
@@ -84,35 +86,82 @@ export function Landing(props) {
 
     const doRegister = () => {
         if (verified && registerUserName && registerCode) {
+            setIsError(false);
             setLoadingMessage('Registering, please wait...');
             setLoading(true);
+            const data = {
+                user: registerUserName,
+                password: registerPassword,
+                code: registerCode
+            }
+            serverCall('user/create', data)
+            .then(result => {
+                if (result.success) {
+                    setLoading(false);
+                    setLoadingMessage('');
+                    const userData = {
+                        name: result.name,
+                        displayName: result.displayName,
+                        avatar: result.avatar,
+                        key: result.key,
+                        createdAt: result.createdAt,
+                        token: result.token
+                    };
+                    props.setUser(userData);
+                }
+                else {
+                    setErrorMessage(result.message);
+                    setIsError(true);
+                    setLoading(true);
+                }
+            })
         }
     }
 
     const doLogin = () => {
         if (loginUserName && loginPassword) {
+            setIsError(false);
             setLoadingMessage('Loging in...');
             setLoading(true);
             serverCall('user/auth', {user: loginUserName, password: loginPassword})
             .then(result => {
-                console.log(result);
-                setLoading(false);
-                setLoadingMessage('');
-                const userData = {
-                    name: result.name,
-                    displayName: result.displayName,
-                    avatar: result.avatar,
-                    key: result.key,
-                    createdAt: result.createdAt,
-                    token: result.token
-                };
-                props.setUser(userData);
+                if (result.success) {
+                    setLoading(false);
+                    setLoadingMessage('');
+                    const userData = {
+                        name: result.name,
+                        displayName: result.displayName,
+                        avatar: result.avatar,
+                        key: result.key,
+                        createdAt: result.createdAt,
+                        token: result.token
+                    };
+                    props.setUser(userData);
+                }
+                else {
+                    setErrorMessage(result.message);
+                    setIsError(true);
+                    setLoading(true);
+                }
+                
             })
             .catch(error => {
                 console.log(error);
                 setLoading(false);
                 setLoadingMessage('');
             })
+        }
+    }
+
+    const loginKeyDown = (e) => {
+        if (e.key === "Enter") {
+            doLogin();
+        }
+    };
+
+    const registerKeyDown = (e) => {
+        if (e.key === "Enter") {
+            doRegister();
         }
     }
 
@@ -123,13 +172,13 @@ export function Landing(props) {
                     <Typography variant="h5" className={classes.title}>Register</Typography>
                 </Grid>
                 <Grid item xs={12} className={classes.field}>
-                    <TextField id="name" label="User Name" onChange={(e) => setRegisterUserName(e.target.value)} />
+                    <TextField id="name" label="User Name" onChange={(e) => setRegisterUserName(e.target.value)} onKeyDown={registerKeyDown} />
                 </Grid>
                 <Grid item xs={12} className={classes.field}>
-                    <TextField id="password" label="Password" type="password" onChange={(e) => {setRegisterPassword(e.target.value); verify(e.target.value, registerVerify);}} />
+                    <TextField id="password" label="Password" type="password" onChange={(e) => {setRegisterPassword(e.target.value); verify(e.target.value, registerVerify);}} onKeyDown={registerKeyDown} />
                 </Grid>
                 <Grid item xs={12} className={classes.field}>
-                    <TextField id="verify" label="Verify Password" type="password" onChange={(e) => {setRegisterVerify(e.target.value); verify(registerPassword, e.target.value);}} />
+                    <TextField id="verify" label="Verify Password" type="password" onChange={(e) => {setRegisterVerify(e.target.value); verify(registerPassword, e.target.value);}} onKeyDown={registerKeyDown} />
                     {
                         verified 
                         ? (<Check className={classes.check} />)
@@ -137,7 +186,7 @@ export function Landing(props) {
                     }
                 </Grid>
                 <Grid item xs={12} className={classes.field}>
-                    <TextField id="code" label="Activation Code" onChange={(e) => {setRegisterCode(e.target.value)}} />
+                    <TextField id="code" label="Activation Code" onChange={(e) => {setRegisterCode(e.target.value)}} onKeyDown={registerKeyDown} />
                 </Grid>
                 <Grid item xs={12} className={classes.field}>
                     <Button variant="contained" color="primary" onClick={doRegister}>Register</Button>
@@ -153,10 +202,10 @@ export function Landing(props) {
                     <Typography variant="h5" className={classes.title}>Login</Typography>
                 </Grid>
                 <Grid item xs={12} className={classes.field}>
-                    <TextField id="lname" label="User Name" onChange={(e) => {setLoginUserName(e.target.value)}} />
+                    <TextField id="lname" label="User Name" onChange={(e) => {setLoginUserName(e.target.value)}} onKeyDown={loginKeyDown} />
                 </Grid>
                 <Grid item xs={12} className={classes.field}>
-                    <TextField id="lpassword" label="Passwrod" type="password" onChange={(e) => {setLoginPassword(e.target.value)}} />
+                    <TextField id="lpassword" label="Passwrod" type="password" onChange={(e) => {setLoginPassword(e.target.value)}} onKeyDown={loginKeyDown} />
                 </Grid>
                 <Grid item xs={12} className={classes.field}>
                     <Button variant="contained" color="primary" onClick={doLogin}>Login</Button>
@@ -179,14 +228,29 @@ export function Landing(props) {
             </div>
             <Modal open={loading} className={classes.modal}>
                 <div className={classes.dialog}>
-                    <Grid container>
-                        <Grid item xs={12}>
-                            <Typography variant="h5" className={classes.dialogText}>{loadingMessage}</Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <CircularProgress />
-                        </Grid>
-                    </Grid>
+                        {
+                            isError
+                            ? (
+                                <Grid container>
+                                    <Grid item xs={12}>
+                                        <Typography variant="h5" color="error" className={classes.dialogText}>{errorMessage}</Typography>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Button variant="contained" onClick={() => {setLoading(false)}}>OK</Button>
+                                    </Grid>
+                                </Grid>
+                            )
+                            : (
+                                <Grid container>
+                                    <Grid item xs={12}>
+                                        <Typography variant="h5" className={classes.dialogText}>{loadingMessage}</Typography>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <CircularProgress />
+                                    </Grid>
+                                </Grid>
+                            )
+                        }
                 </div>
             </Modal>
         </React.Fragment>

@@ -20,7 +20,7 @@ class UserController {
                     res.status(200).send(data);
                 }
                 else {
-                    res.status(422).send(result);
+                    res.status(200).send(result);
                 }
             })
             .catch(error => {
@@ -28,7 +28,7 @@ class UserController {
             })
         }
         else {
-            res.status(400).send({success: false, message: 'Missing Parameters'});
+            res.status(200).send({success: false, message: 'Missing Parameters'});
         }
     }
 
@@ -41,12 +41,12 @@ class UserController {
                     res.status(200).send(data);
                 }
                 else {
-                    res.status(403).send(result);
+                    res.status(200).send(result);
                 }
             })
         }
         else {
-            res.status(400).send({success: false, message: 'Missing Parameters'});
+            res.status(200).send({success: false, message: 'Missing Parameters'});
         }
     }
 
