@@ -10,7 +10,6 @@ class UserDB {
         return new Promise((resolve, reject) => {
             const query = `SELECT createUser('${userName}', '${password}', '${activationCode}');`;
             this.pool.query(query, (err, result) => {
-                console.log('result...');
                 console.log(result);
                 if (err) {
                     reject(err);

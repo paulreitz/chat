@@ -84,6 +84,16 @@ export function Landing(props) {
         setVerified(a && a === b);
     }
 
+    const setStore = (data) => {
+        try {
+            const dataString = JSON.stringify(data);
+            window.localStorage.setItem('user', dataString);
+        }
+        catch (error) {
+            console.log('unable to set user data to local storage', error);
+        }
+    }
+
     const doRegister = () => {
         if (verified && registerUserName && registerCode) {
             setIsError(false);
@@ -107,6 +117,7 @@ export function Landing(props) {
                         createdAt: result.createdAt,
                         token: result.token
                     };
+                    setStore(userData);
                     props.setUser(userData);
                 }
                 else {
@@ -136,6 +147,7 @@ export function Landing(props) {
                         createdAt: result.createdAt,
                         token: result.token
                     };
+                    setStore(userData);
                     props.setUser(userData);
                 }
                 else {

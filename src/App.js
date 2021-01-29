@@ -9,6 +9,8 @@ import store from './store/configureStore';
 import theme from './theme/theme';
 import Header from './components/Header';
 import Landing from './components/Landing';
+import Profile from './components/Profile';
+import Chat from './components/Chat';
 
 function App() {
   return (
@@ -18,8 +20,8 @@ function App() {
           <Header />
           <Switch>
             <PublicRoute exact path="/" component={Landing} />
-            <PrivateRoute exact path="/profile" render={(props) => <div>Profile</div>} />
-            <PrivateRoute exact path="/chat" render={(props) => <div>Chat</div>} />
+            <PrivateRoute exact path="/profile" component={Profile} />
+            <PrivateRoute exact path="/chat" component={Chat} />
             <Route path="*" render={(props) => <div>404</div>} />
           </Switch>
         </BrowserRouter>
