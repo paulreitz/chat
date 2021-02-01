@@ -1,4 +1,5 @@
 import axios from 'axios';
+import store from '../store/configureStore';
 
 const server = process.env && process.env.NODE_ENV && process.env.NODE_ENV === "development" 
                 ? 'http://localhost:3001/api'
@@ -14,7 +15,12 @@ export const serverCall = (endpoint, data) => {
 }
 
 const attemptCall = (endpoint, data, resolve, reject, attempt) => {
-    axios.post(`${server}/${endpoint}`, data)
+    const token = store.getState().user.token;
+    const config = {};
+    if (!!token) {
+        config.headers = {'x-access-token': `Bearer ${token}`};
+    }
+    axios.post(`${server}/${endpoint}`, data, config)
     .then((response) => {
         resolve(response.data);
     })
