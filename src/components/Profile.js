@@ -95,7 +95,7 @@ export function Profile(props) {
                 props.setAvatar(result.avatar);
                 try {
                     const userString = JSON.stringify(newUser);
-                    window.localStorage.setIten('user', userString);
+                    window.localStorage.setItem('user', userString);
                 }
                 catch(e) {
                     console.log(e);
