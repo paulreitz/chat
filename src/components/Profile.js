@@ -28,7 +28,17 @@ const useStyles = makeStyles(theme => ({
     avatar: {
         width: 150,
         height: 150,
-        borderRadius: 5
+        borderRadius: 5,
+        cursor: 'pointer'
+    },
+    avatarLoading: {
+        width: 150,
+        height: 150,
+        borderRadius: 5,
+        backgroundColor: '#aeaeae',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     displayName: {
         display: 'flex'
@@ -67,6 +77,37 @@ export function Profile(props) {
 
     const [displayState, setDisplayState] = useState('display');
     const [currentDisplayName, setCurrentDisplayName] = useState(props.user.displayName);
+    const [loadingAvatar, setLoadingAvatar] = useState(false);
+
+    const chooseAvatar = () => {
+        document.getElementById('avatar-input').click();
+    }
+
+    const uploadAvatar = (e) => {
+        setLoadingAvatar(true);
+        const formdata = new FormData();
+        formdata.append('avatar', e.target.files[0]);
+        serverCall('user/avatar', formdata)
+        .then(result => {
+            if (result.success) {
+                const newUser = props.user;
+                newUser.avater = result.avatar;
+                props.setAvatar(result.avatar);
+                try {
+                    const userString = JSON.stringify(newUser);
+                    window.localStorage.setIten('user', userString);
+                }
+                catch(e) {
+                    console.log(e);
+                }
+            }
+            setLoadingAvatar(false);
+        })
+        .catch(error => {
+            console.log(error);
+            setLoadingAvatar(false);
+        })
+    }
 
     const updateDisplayName = () => {
         setDisplayState('loading');
@@ -149,7 +190,20 @@ export function Profile(props) {
         <div className={classes.container}>
             <Grid container>
                 <Grid item xs={2}>
-                    <Avatar alt='avatar' src={`images/avatars/${props.user.avatar}`} className={classes.avatar} variant="square" />
+                    {
+                        loadingAvatar
+                        ? (
+                            <div className={classes.avatarLoading}>
+                                <CircularProgress color="primary" size={70} />
+                            </div>
+                        )
+                        : (
+                            <React.Fragment>
+                                <input type="file" id="avatar-input" name="avatar" multiple hidden accept="image/*" onChange={uploadAvatar} />
+                                <Avatar alt='avatar' src={`images/avatars/${props.user.avatar}`} className={classes.avatar} variant="square" onClick={chooseAvatar} />
+                            </React.Fragment>
+                        )
+                    }
                 </Grid>
                 <Grid item xs={10}>
                     {userDisplay}

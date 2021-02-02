@@ -20,6 +20,7 @@ export default (state = defaultUserData, action) => {
         case userActions.SET_AVATAR:
             const setAvatarData = state;
             setAvatarData.avatar = action.avatar;
+            console.log(setAvatarData);
             return setAvatarData;
 
         case userActions.SET_DISPLAY_NAME:

@@ -23,3 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 /config
+/public/images/avatars
+!/public/images/avatars/default.jpg
