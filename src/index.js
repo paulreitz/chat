@@ -5,13 +5,6 @@ import store from './store/configureStore';
 import { setUser } from './store/actions/userActions';
 import reportWebVitals from './reportWebVitals';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
-
 const user = window.localStorage.getItem('user');
 if (user) {
   try {
@@ -22,6 +15,13 @@ if (user) {
     console.log('Unable to fetch user data from store', error);
   }
 }
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
