@@ -23,6 +23,9 @@ const useStyles = makeStyles(theme => ({
     chatDisplay: {
         overflowY: 'scroll'
 
+    },
+    chatBox: {
+        width: '100%'
     }
 }))
 
@@ -39,7 +42,7 @@ export default function Chat(props) {
                         <Box p={1} width="100%">
                             <Grid container justify="space-between" alignItems="center" spacing={3}>
                                 <Grid item xs={10}>
-                                    <TextField width="100%" variant="outlined"></TextField>
+                                    <TextField className={classes.chatBox} width="100%" variant="outlined"></TextField>
                                 </Grid>
                                 <Grid item xs={2}>
                                     <Button variant="contained" color="primary">Send</Button>
