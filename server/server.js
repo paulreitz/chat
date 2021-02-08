@@ -1,11 +1,12 @@
 const path = require('path');
 const express = require('express');
+const app = express();
+const http = require('http').Server(app);
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const UserController = require('./controllers/UserController');
 
-const app = express();
 const router = express.Router();
 const publicPath = path.join(__dirname, '..', 'build');
 const port = process.env.PORT || 3001;
@@ -24,7 +25,7 @@ app.get('*', (__req, res) => {
     res.sendFile(path.join(publicPath, 'index.html'));
 });
 
-app.listen(port, () => {
+http.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });
 
