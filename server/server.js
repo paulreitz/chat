@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const UserController = require('./controllers/UserController');
+const createIO = require('./socket/socket');
+createIO(http);
 
 const router = express.Router();
 const publicPath = path.join(__dirname, '..', 'build');
