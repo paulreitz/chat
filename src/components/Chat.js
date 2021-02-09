@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/styles';
+
+import OnlineUser from './OnlineUser';
 
 import ClientSocket from '../utils/clientsocket';
 let socket = undefined;
@@ -55,7 +58,7 @@ export function Chat(props) {
     return (
         <div className={classes.container}>
             <Grid container alignItems="stretch" className={classes.gridContainer}>
-                <Grid item xs={10}>
+                <Grid item xs={9}>
                     <Box display="flex" p={1} flexDirection="column" height="100%">
                         <Box flexGrow={1} p={1} className={classes.chatDisplay}></Box>
                         <Box p={1} width="100%">
@@ -78,8 +81,13 @@ export function Chat(props) {
                         </Box>
                     </Box>
                 </Grid>
-                <Grid item xs={2}>
-                
+                <Grid item xs={3}>
+                    <Grid container>
+                        <Grid item xs={12}>
+                            <Typography variant="subtitle1">Online Users</Typography>
+                            {props.online.map(online => (<OnlineUser key={online.key} {...online}/>))}
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Grid>
         </div>
