@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/styles';
 
 import OnlineUser from './OnlineUser';
+import Message from './Message';
 
 import ClientSocket from '../utils/clientsocket';
 let socket = undefined;
@@ -27,6 +28,7 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'column'
     },
     chatDisplay: {
+        overflow: 'hidden',
         overflowY: 'scroll'
 
     },
@@ -45,8 +47,10 @@ export function Chat(props) {
     const [message, setMessage] = useState('');
 
     const sendMessage = () => {
-        socket.sendMessage(message);
-        setMessage('');
+        if (message.trim() !== '') {
+            socket.sendMessage(message);
+            setMessage('');
+        }
     }
 
     const sendMessageKeyDown = (e) => {
@@ -54,13 +58,22 @@ export function Chat(props) {
             sendMessage();
         }
     }
+    console.log(props.messages.length)
 
     return (
         <div className={classes.container}>
             <Grid container alignItems="stretch" className={classes.gridContainer}>
                 <Grid item xs={9}>
                     <Box display="flex" p={1} flexDirection="column" height="100%">
-                        <Box flexGrow={1} p={1} className={classes.chatDisplay}></Box>
+                        <Box flexGrow={1} p={1} className={classes.chatDisplay}>
+                            <Grid container>
+                                {
+                                    props.messages.map((message, i) => {
+                                        return (<Message key={`message_${i}`} {...message} userKey={props.userKey}/>)
+                                    })
+                                }
+                            </Grid>
+                        </Box>
                         <Box p={1} width="100%">
                             <Grid container justify="space-between" alignItems="center" spacing={3}>
                                 <Grid item xs={10}>
@@ -85,7 +98,7 @@ export function Chat(props) {
                     <Grid container>
                         <Grid item xs={12}>
                             <Typography variant="subtitle1">Online Users</Typography>
-                            {props.online.map(online => (<OnlineUser key={online.key} {...online}/>))}
+                            {props.online.map(online => (<OnlineUser key={online.senderKey} {...online}/>))}
                         </Grid>
                     </Grid>
                 </Grid>
@@ -95,7 +108,9 @@ export function Chat(props) {
 }
 
 const mapStateToProps = (state) => ({
-    online: state.online
+    userKey: state.user.key,
+    online: state.online,
+    messages: state.messages
 });
 
 export default connect(mapStateToProps)(Chat);

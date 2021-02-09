@@ -1,6 +1,7 @@
 import { io } from 'socket.io-client';
 import store from '../store/configureStore';
 import { setOnlineUsers } from '../store/actions/onlineActions';
+import { addMessage } from '../store/actions/messageActions';
 
 export default class ClientSocket {
     constructor() {
@@ -12,7 +13,7 @@ export default class ClientSocket {
         this.user = {
             displayName: userData.displayName,
             avatar: userData.avatar,
-            key: userData.key
+            senderKey: userData.key
         }
         this.socket.on('users', this.getUsers);
         this.socket.on('message', this.getMessage);
@@ -22,12 +23,10 @@ export default class ClientSocket {
 
     getUsers = (users) => {
         store.dispatch(setOnlineUsers(users));
-        console.log(users);
     }
 
     getMessage = (msg) => {
-        // add the message with user data to the store.
-        console.log(msg);
+        store.dispatch(addMessage(msg));
     }
 
     sendMessage = (message) => {
