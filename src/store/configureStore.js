@@ -1,12 +1,14 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import UserReducer from './reducers/userReducer';
+import OnlineReducer from './reducers/onlineReducer';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(
     combineReducers({
-        user: UserReducer
+        user: UserReducer,
+        online: OnlineReducer
     }),
     composeEnhancers(applyMiddleware(thunk))
 );

@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 
-export default function Chat(props) {
+export function Chat(props) {
     if (!socket) {
         socket = new ClientSocket();
     }
@@ -85,3 +85,9 @@ export default function Chat(props) {
         </div>
     )
 }
+
+const mapStateToProps = (state) => ({
+    online: state.online
+});
+
+export default connect(mapStateToProps)(Chat);

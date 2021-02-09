@@ -1,5 +1,6 @@
 import { io } from 'socket.io-client';
 import store from '../store/configureStore';
+import { setOnlineUsers } from '../store/actions/onlineActions';
 
 export default class ClientSocket {
     constructor() {
@@ -20,7 +21,7 @@ export default class ClientSocket {
     }
 
     getUsers = (users) => {
-        // Store currently online users in the store
+        store.dispatch(setOnlineUsers(users));
         console.log(users);
     }
 
