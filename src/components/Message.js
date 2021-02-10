@@ -8,7 +8,20 @@ import Avatar from '@material-ui/core/Avatar';
 import { makeStyles } from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
-
+    card: {
+        marginBottom: 15
+    },
+    cardOther: {
+        marginBottom: 15,
+        backgroundColor: theme.palette.grey['300']
+    },
+    header: {
+        padding: 5
+    },
+    avatar: {
+        width: theme.spacing(3),
+        height: theme.spacing(3)
+    }
 }));
 
 export default function Message(props) {
@@ -20,9 +33,10 @@ export default function Message(props) {
         <Grid item xs={12}>
             <Grid container justify={right? 'flex-end' : 'flex-start'}>
                 <Grid item>
-                    <Card>
+                    <Card className={right? classes.card : classes.cardOther}>
                         <CardHeader
-                            avatar={<Avatar src={`images/avatars/${props.avatar}`} />}
+                            className={classes.header}
+                            avatar={<Avatar className={classes.avatar} src={`images/avatars/${props.avatar}`} />}
                             title={props.displayName}
                         />
                         <CardContent>

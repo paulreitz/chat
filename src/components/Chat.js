@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -10,24 +10,26 @@ import { makeStyles } from '@material-ui/styles';
 import OnlineUser from './OnlineUser';
 import Message from './Message';
 
-import ClientSocket from '../utils/clientsocket';
-let socket = undefined;
+import socket from '../utils/clientsocket';
 
 const useStyles = makeStyles(theme => ({
     container: {
         width: 980,
         marginLeft: 'auto',
         marginRight: 'auto',
-        height: `calc(100% - ${theme.mixins.toolbar.minHeight}px)`
+        maxHeight: `calc(100% - ${theme.mixins.toolbar.minHeight}px)`
     },
     gridContainer: {
-        minHeight: '100%'
+        maxHeight: '100%',
+        position: 'relative'
     },
     chatContainer: {
         display: 'flex',
         flexDirection: 'column'
     },
     chatDisplay: {
+        maxHeight: `calc(90vh - 72px - ${theme.mixins.toolbar.minHeight}px)`, // Magic numbers: this value should exist in theme.
+        minHeight: `calc(90vh - 72px - ${theme.mixins.toolbar.minHeight}px)`,
         overflow: 'hidden',
         overflowY: 'scroll'
 
@@ -39,10 +41,13 @@ const useStyles = makeStyles(theme => ({
 
 
 export function Chat(props) {
-    if (!socket) {
-        socket = new ClientSocket();
-    }
+    socket.init();
     const classes = useStyles();
+    const chatBottomRef = useRef(null);
+
+    useEffect(() => {
+        chatBottomRef.current.scrollIntoView({ behavior: 'smooth'});
+    })
 
     const [message, setMessage] = useState('');
 
@@ -64,14 +69,15 @@ export function Chat(props) {
         <div className={classes.container}>
             <Grid container alignItems="stretch" className={classes.gridContainer}>
                 <Grid item xs={9}>
-                    <Box display="flex" p={1} flexDirection="column" height="100%">
+                    <Box display="flex" p={1} flexDirection="column">
                         <Box flexGrow={1} p={1} className={classes.chatDisplay}>
-                            <Grid container>
+                            <Grid container alignItems="flex-start">
                                 {
                                     props.messages.map((message, i) => {
                                         return (<Message key={`message_${i}`} {...message} userKey={props.userKey}/>)
                                     })
                                 }
+                                <Grid item ref={chatBottomRef} xs={12}></Grid>
                             </Grid>
                         </Box>
                         <Box p={1} width="100%">
