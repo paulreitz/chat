@@ -33,7 +33,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "start:dev-server": "nodemon -r dotenv/config server/server.js dotenv_config_path=config/dev.env"
+    "start:dev-server": "nodemon -r dotenv/config server/server.js dotenv_config_path=config/dev.env",
+    "start:staging-server": "nodemon -r dotenv/config server/server.js dotenv_config_path=config/staging.env"
   },
   "eslintConfig": {
     "extends": [
